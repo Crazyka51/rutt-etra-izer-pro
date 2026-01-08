@@ -108,6 +108,7 @@ _stageWidth,
 _stageHeight,
 _enableMouseMove = false,
 _updateTimeout = null,
+_colorTimeout = null, // Separátní timeout pro updateLineColor
 _isUpdating = false,
 
 //VARS ACCESSIBLE BY GUI
@@ -177,6 +178,75 @@ function resetRotation() {
 	_gui.updateDisplay();
 }
 
+function resetEffect() {
+	log('Reset 3D efektu', 'info');
+	_guiOptions.stageSize = 0.8;
+	_guiOptions.scale = 2.0;
+	_guiOptions.scanStep = 5;
+	_guiOptions.lineThickness = 3.0;
+	_guiOptions.opacity = 1.0;
+	_guiOptions.depth = 100;
+	_guiOptions.depthInvert = false;
+	_guiOptions.brightMin = 0;
+	_guiOptions.brightMax = 255;
+	_guiOptions.depthFalloff = 1.0;
+	_gui.updateDisplay();
+	updateImage();
+}
+
+function resetVisual() {
+	log('Reset vizualizace', 'info');
+	_guiOptions.bgColor = '#000000';
+	_guiOptions.colorMode = 'original';
+	_guiOptions.lineColorR = 255;
+	_guiOptions.lineColorG = 255;
+	_guiOptions.lineColorB = 255;
+	_gui.updateDisplay();
+	updateBackground();
+	updateImage();
+}
+
+function resetBasic() {
+	log('Reset základních úprav', 'info');
+	_guiOptions.brightness = 0;
+	_guiOptions.contrast = 0;
+	_guiOptions.exposure = 0;
+	_guiOptions.saturation = 0;
+	_guiOptions.sharpness = 0;
+	_gui.updateDisplay();
+	updateImage();
+}
+
+function resetAdvanced() {
+	log('Reset pokročilých úprav', 'info');
+	_guiOptions.highlights = 0;
+	_guiOptions.shadows = 0;
+	_guiOptions.vignette = 0;
+	_gui.updateDisplay();
+	updateImage();
+}
+
+function resetColor() {
+	log('Reset barevných úprav', 'info');
+	_guiOptions.color = 0;
+	_guiOptions.warmth = 0;
+	_guiOptions.tint = 0;
+	_guiOptions.hue = 0;
+	_guiOptions.gamma = 1.0;
+	_guiOptions.invertImage = false;
+	_gui.updateDisplay();
+	updateImage();
+}
+
+function resetRGB() {
+	log('Reset RGB kanálů', 'info');
+	_guiOptions.rGain = 1.0;
+	_guiOptions.gGain = 1.0;
+	_guiOptions.bGain = 1.0;
+	_gui.updateDisplay();
+	updateImage();
+}
+
 function updateRotation() {
 	// Auto-rotace je řešena v render() funkci
 }
@@ -195,9 +265,9 @@ function updateBackground() {
 
 function updateLineColor() {
 	// Barva čar se aplikuje jen když se znovu vytvoří čáry
-	// Debounce pro lepší výkon
-	clearTimeout(_updateTimeout);
-	_updateTimeout = setTimeout(function() {
+	// ODDĚLENÝ debounce timeout aby se nespustil updateImage timeout
+	clearTimeout(_colorTimeout);
+	_colorTimeout = setTimeout(function() {
 		if (_guiOptions.colorMode === 'monochrome' || _guiOptions.colorMode === 'gradient') {
 			createLines();
 		}
@@ -214,14 +284,15 @@ document.getElementById('controls-container').appendChild( _gui.domElement );
 var effectFolder = _gui.addFolder('⚙️ 3D Efekt');
 effectFolder.add(_guiOptions, 'stageSize',.2,1,.1).onChange(doLayout).name('Velikost scény');
 effectFolder.add(_guiOptions, 'scale', 0.1, 10,0.1).listen().name('Přiblížení');
-effectFolder.add(_guiOptions, 'scanStep', 1, 20,1).onChange( createLines ).name('Rozestup čar');
+effectFolder.add(_guiOptions, 'scanStep', 1, 20,1).onChange( updateImage ).name('Rozestup čar');
 effectFolder.add(_guiOptions, 'lineThickness', 0.1, 10,0.1).onChange( updateMaterial ).name('Tloušťka čar');
 effectFolder.add(_guiOptions, 'depth', 0, 300,1).name('Hloubka efektu');
 effectFolder.add(_guiOptions, 'opacity', 0, 1,0.1).onChange( updateMaterial ).name('Průhlednost');
-effectFolder.add(_guiOptions, 'depthInvert').name('⚡ Invertovat hloubku').onChange( createLines );
-effectFolder.add(_guiOptions, 'brightMin', 0, 255, 1).name('Min. jas (ořez)').onChange( createLines );
-effectFolder.add(_guiOptions, 'brightMax', 0, 255, 1).name('Max. jas (ořez)').onChange( createLines );
-effectFolder.add(_guiOptions, 'depthFalloff', 0.1, 5.0, 0.1).name('Kontrast hloubky').onChange( createLines );
+effectFolder.add(_guiOptions, 'depthInvert').name('⚡ Invertovat hloubku').onChange( updateImage );
+effectFolder.add(_guiOptions, 'brightMin', 0, 255, 1).name('Min. jas (ořez)').onChange( updateImage );
+effectFolder.add(_guiOptions, 'brightMax', 0, 255, 1).name('Max. jas (ořez)').onChange( updateImage );
+effectFolder.add(_guiOptions, 'depthFalloff', 0.1, 5.0, 0.1).name('Kontrast hloubky').onChange( updateImage );
+effectFolder.add(this, 'resetEffect').name('🔄 Reset efektu');
 effectFolder.open();
 
 // 3D Rotace a kamera složka
@@ -237,10 +308,11 @@ rotationFolder.open();
 // Barvy a režimy složka
 var visualFolder = _gui.addFolder('🎨 Vizuální režimy');
 visualFolder.addColor(_guiOptions, 'bgColor').onChange(updateBackground).name('Barva pozadí');
-visualFolder.add(_guiOptions, 'colorMode', ['original', 'monochrome', 'rainbow', 'gradient']).onChange(createLines).name('Barevný režim');
+visualFolder.add(_guiOptions, 'colorMode', ['original', 'monochrome', 'rainbow', 'gradient']).onChange(updateImage).name('Barevný režim');
 visualFolder.add(_guiOptions, 'lineColorR', 0, 255, 1).onChange(updateLineColor).name('Barva čar - R');
 visualFolder.add(_guiOptions, 'lineColorG', 0, 255, 1).onChange(updateLineColor).name('Barva čar - G');
 visualFolder.add(_guiOptions, 'lineColorB', 0, 255, 1).onChange(updateLineColor).name('Barva čar - B');
+visualFolder.add(this, 'resetVisual').name('🔄 Reset vizualizace');
 visualFolder.open();
 
 // Základní úpravy složka
@@ -250,6 +322,7 @@ basicFolder.add(_guiOptions, 'contrast', -100, 100, 1).onChange( updateImage ).n
 basicFolder.add(_guiOptions, 'exposure', -100, 100, 1).onChange( updateImage ).name('Expozice');
 basicFolder.add(_guiOptions, 'saturation', -100, 100, 1).onChange( updateImage ).name('Sytost');
 basicFolder.add(_guiOptions, 'sharpness', 0, 100, 1).onChange( updateImage ).name('Ostrost');
+basicFolder.add(this, 'resetBasic').name('🔄 Reset základu');
 basicFolder.open();
 
 // Pokročilé úpravy složka
@@ -257,6 +330,7 @@ var advancedFolder = _gui.addFolder('✨ Pokročilé úpravy');
 advancedFolder.add(_guiOptions, 'highlights', -100, 100, 1).onChange( updateImage ).name('Světlá místa');
 advancedFolder.add(_guiOptions, 'shadows', -100, 100, 1).onChange( updateImage ).name('Stíny');
 advancedFolder.add(_guiOptions, 'vignette', 0, 100, 1).onChange( updateImage ).name('Vinětace');
+advancedFolder.add(this, 'resetAdvanced').name('🔄 Reset pokročilých');
 advancedFolder.open();
 
 // Barvy složka
@@ -267,6 +341,7 @@ colorFolder.add(_guiOptions, 'tint', -100, 100, 1).onChange( updateImage ).name(
 colorFolder.add(_guiOptions, 'hue', -180, 180, 1).onChange( updateImage ).name('Barevný odstín');
 colorFolder.add(_guiOptions, 'gamma', 0.1, 3.0, 0.1).onChange( updateImage ).name('Gamma korekce');
 colorFolder.add(_guiOptions, 'invertImage').onChange( updateImage ).name('Invertovat barvy');
+colorFolder.add(this, 'resetColor').name('🔄 Reset barev');
 colorFolder.open();
 
 // RGB Kanály složka
@@ -274,6 +349,7 @@ var rgbFolder = _gui.addFolder('🔴🟢🔵 RGB Kanály');
 rgbFolder.add(_guiOptions, 'rGain', 0, 2.0, 0.1).onChange( updateImage ).name('Zesílení R (Červená)');
 rgbFolder.add(_guiOptions, 'gGain', 0, 2.0, 0.1).onChange( updateImage ).name('Zesílení G (zelená)');
 rgbFolder.add(_guiOptions, 'bGain', 0, 2.0, 0.1).onChange( updateImage ).name('Zesílení B (modrá)');
+rgbFolder.add(this, 'resetRGB').name('🔄 Reset RGB');
 
 // Akce
 _gui.add(this, 'resetFilters').name('🔄 Resetovat filtry');
@@ -390,7 +466,7 @@ $(document).ready( function() {
 	});
 	//init mouse listeners
 	$("#stage").mousemove( onMouseMove);
-	$(window).mousewheel( onMouseWheel);
+	$("#stage").mousewheel( onMouseWheel); // Scroll jen nad 3D scénou
 	$(window).keydown(onKeyDown);
 	$(window).mousedown( function() {
 		_enableMouseMove = true;
