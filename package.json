@@ -1,0 +1,45 @@
+{
+  "name": "rutt-etra-izer-electron",
+  "version": "1.0.0",
+  "description": "Rutt-Etra-Izer as Electron app",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "build": "electron-builder --win --x64",
+    "build-portable": "electron-builder --win portable --x64"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "build": {
+    "appId": "com.ruttetraizer.app",
+    "productName": "Rutt-Etra-Izer",
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "icon": "img/icon.ico"
+    },
+    "files": [
+      "**/*",
+      "!node_modules/**/*",
+      "node_modules/dat.gui/**/*"
+    ],
+    "directories": {
+      "output": "dist"
+    }
+  },
+  "devDependencies": {
+    "electron": "^33.4.11",
+    "electron-builder": "^24.13.3"
+  },
+  "dependencies": {
+    "dat.gui": "^0.7.9"
+  }
+}
