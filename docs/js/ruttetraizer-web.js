@@ -4,85 +4,6 @@
  * Modified for GitHub Pages deployment
  */
 
-//LOGGER SYSTEM
-var _logMessages = [];
-var _maxLogMessages = 100;
-
-function log(message, type) {
-	type = type || 'info';
-	var timestamp = new Date().toLocaleTimeString('cs-CZ');
-	var logEntry = '[' + timestamp + '] [' + type.toUpperCase() + '] ' + message;
-	
-	// Console log
-	if (type === 'error') {
-		console.error(logEntry);
-	} else if (type === 'warn') {
-		console.warn(logEntry);
-	} else {
-		console.log(logEntry);
-	}
-	
-	// Store in memory
-	_logMessages.push({ time: timestamp, type: type, message: message });
-	if (_logMessages.length > _maxLogMessages) {
-		_logMessages.shift();
-	}
-	
-	// Update UI log panel if exists
-	updateLogPanel();
-}
-
-function updateLogPanel() {
-	var logPanel = document.getElementById('log-panel');
-	if (logPanel) {
-		var html = '';
-		for (var i = _logMessages.length - 1; i >= Math.max(0, _logMessages.length - 20); i--) {
-			var entry = _logMessages[i];
-			var className = 'log-' + entry.type;
-			html += '<div class="' + className + '">[' + entry.time + '] ' + entry.message + '</div>';
-		}
-		logPanel.innerHTML = html;
-	}
-}
-
-function exportLogs() {
-	var logText = '=== Rutt-Etra-Izer LOG EXPORT ===\n';
-	logText += 'Export Time: ' + new Date().toLocaleString('cs-CZ') + '\n';
-	logText += 'Total Messages: ' + _logMessages.length + '\n\n';
-	
-	_logMessages.forEach(function(entry) {
-		logText += '[' + entry.time + '] [' + entry.type.toUpperCase() + '] ' + entry.message + '\n';
-	});
-	
-	var blob = new Blob([logText], { type: 'text/plain' });
-	var url = URL.createObjectURL(blob);
-	var a = document.createElement('a');
-	a.href = url;
-	a.download = 'rutt-etra-log-' + Date.now() + '.txt';
-	a.click();
-	URL.revokeObjectURL(url);
-	log('Logy exportovány do souboru', 'info');
-}
-
-function clearLogs() {
-	_logMessages = [];
-	updateLogPanel();
-	log('Logy vymazány', 'info');
-}
-
-function getSystemInfo() {
-	var info = {
-		userAgent: navigator.userAgent,
-		platform: navigator.platform,
-		language: navigator.language,
-		screenResolution: window.screen.width + 'x' + window.screen.height,
-		windowSize: window.innerWidth + 'x' + window.innerHeight,
-		webGLSupport: Detector.webgl,
-		memory: performance.memory ? Math.round(performance.memory.usedJSHeapSize / 1048576) + ' MB' : 'N/A'
-	};
-	return info;
-}
-
 //VARS
 var _stage,
 _lineGroup,
@@ -155,19 +76,15 @@ _guiOptions  = {
 
 function saveImage() {
 	try {
-		log('Pokus o uložení obrázku...', 'info');
 		render();
 		window.open(_renderer.domElement.toDataURL("image/png"));
-		log('Obrázek úspěšně uložen', 'success');
 	} catch (error) {
-		log('CHYBA při ukládání obrázku: ' + error.message, 'error');
 		console.error('Chyba při ukládání obrázku:', error);
 		alert('Nepodařilo se uložit obrázek. Ujistěte se, že jste načetli obrázek a vytvořili 3D scénu.');
 	}
 }
 
 function resetRotation() {
-	log('Reset rotace', 'info');
 	_guiOptions.rotationX = 0;
 	_guiOptions.rotationY = 0;
 	_manualRotX = 0;
@@ -178,7 +95,6 @@ function resetRotation() {
 }
 
 function resetEffect() {
-	log('Reset 3D efektu', 'info');
 	_guiOptions.stageSize = 0.8;
 	_guiOptions.scale = 2.0;
 	_guiOptions.scanStep = 5;
@@ -194,7 +110,6 @@ function resetEffect() {
 }
 
 function resetVisual() {
-	log('Reset vizualizace', 'info');
 	_guiOptions.bgColor = '#000000';
 	_guiOptions.colorMode = 'original';
 	_guiOptions.lineColorR = 255;
@@ -206,7 +121,6 @@ function resetVisual() {
 }
 
 function resetBasic() {
-	log('Reset základních úprav', 'info');
 	_guiOptions.brightness = 0;
 	_guiOptions.contrast = 0;
 	_guiOptions.exposure = 0;
@@ -217,7 +131,6 @@ function resetBasic() {
 }
 
 function resetAdvanced() {
-	log('Reset pokročilých úprav', 'info');
 	_guiOptions.highlights = 0;
 	_guiOptions.shadows = 0;
 	_guiOptions.vignette = 0;
@@ -226,7 +139,6 @@ function resetAdvanced() {
 }
 
 function resetColor() {
-	log('Reset barevných úprav', 'info');
 	_guiOptions.color = 0;
 	_guiOptions.warmth = 0;
 	_guiOptions.tint = 0;
@@ -238,7 +150,6 @@ function resetColor() {
 }
 
 function resetRGB() {
-	log('Reset RGB kanálů', 'info');
 	_guiOptions.rGain = 1.0;
 	_guiOptions.gGain = 1.0;
 	_guiOptions.bGain = 1.0;
@@ -247,7 +158,6 @@ function resetRGB() {
 }
 
 function setFrontalView() {
-	log('Nastavení frontálního pohledu', 'info');
 	_guiOptions.rotationX = 0;
 	_guiOptions.rotationY = 0;
 	_guiOptions.autoRotate = false;
@@ -288,22 +198,7 @@ function updateLineColor() {
 	}, 300);
 }
 
-function showSystemInfo() {
-	var info = getSystemInfo();
-	var msg = 'SYSTÉMOVÉ INFORMACE:\n\n';
-	msg += 'Platforma: ' + info.platform + '\n';
-	msg += 'User Agent: ' + info.userAgent + '\n';
-	msg += 'Jazyk: ' + info.language + '\n';
-	msg += 'Rozlišení: ' + info.screenResolution + '\n';
-	msg += 'Velikost okna: ' + info.windowSize + '\n';
-	msg += 'WebGL podpora: ' + (info.webGLSupport ? 'ANO' : 'NE') + '\n';
-	msg += 'Použitá paměť: ' + info.memory + '\n';
-	log('Zobrazení systémových informací', 'info');
-	alert(msg);
-}
-
 function initGUI() {
-	log('Inicializace GUI...', 'info');
 	
 	// Init GUI - Web version uses dat.GUI from CDN
 	_gui = new dat.GUI({ width: 280 });
@@ -384,28 +279,13 @@ function initGUI() {
 	// Akce
 	_gui.add({ fn: resetFilters }, 'fn').name('🔄 Resetovat filtry');
 	_gui.add({ fn: saveImage }, 'fn').name('💾 Uložit obrázek');
-
-	// Diagnostika
-	var diagFolder = _gui.addFolder('🔧 Diagnostika');
-	diagFolder.add({ fn: exportLogs }, 'fn').name('📥 Exportovat logy');
-	diagFolder.add({ fn: clearLogs }, 'fn').name('🗑️ Vymazat logy');
-	diagFolder.add({ fn: showSystemInfo }, 'fn').name('ℹ️ Info o systému');
 	
-	log('GUI inicializováno', 'success');
 }
 
 /**
  * Init page
  */
 $(document).ready( function() {
-
-	log('========================================', 'info');
-	log('Rutt-Etra-Izer Pro STARTUP (Web Version)', 'info');
-	log('========================================', 'info');
-	var sysInfo = getSystemInfo();
-	log('Platforma: ' + sysInfo.platform, 'info');
-	log('Rozlišení: ' + sysInfo.screenResolution, 'info');
-	log('WebGL: ' + (sysInfo.webGLSupport ? 'Podporováno' : 'NEPODPOROVÁNO!'), sysInfo.webGLSupport ? 'info' : 'error');
 
 	// Inicializuj GUI až po načtení DOM
 	initGUI();
@@ -414,7 +294,6 @@ $(document).ready( function() {
 
 	//init image drag and drop
 	if (typeof(FileReader) != "undefined") {
-		log('Drag & Drop inicializován', 'info');
 
 		window.addEventListener('dragover', function(event) {
 			event.preventDefault();
@@ -423,10 +302,8 @@ $(document).ready( function() {
 			event.preventDefault();
 
 			var file = event.dataTransfer.files[0];
-			log('Soubor přetažen: ' + file.name + ' (' + Math.round(file.size/1024) + ' KB)', 'info');
 			var fileType = file.type;
 			if (!fileType.match(/image\/\w+/)) {
-				log('CHYBA: Neplatný typ souboru - ' + fileType, 'error');
 				alert("Podporovány jsou pouze obrázkové soubory.");
 				return;
 			}
@@ -452,7 +329,6 @@ $(document).ready( function() {
 			reader.readAsDataURL(file);
 		}, false);
 	} else {
-		log('VAROVÁNÍ: FileReader API není podporováno', 'warn');
 	}
 
 	// stop the user getting a text cursor
@@ -469,10 +345,8 @@ $(document).ready( function() {
 	$("#fileInput").change(function(event) {
 		var file = event.target.files[0];
 		if (file) {
-			log('Vybrán soubor: ' + file.name + ' (' + Math.round(file.size/1024) + ' KB)', 'info');
 			
 			if (!file.type.match(/image\/\w+/)) {
-				log('CHYBA: Neplatný typ souboru - ' + file.type, 'error');
 				alert("Podporovány jsou pouze obrázkové soubory.");
 				return;
 			}
@@ -522,12 +396,9 @@ $(document).ready( function() {
 });
 
 function initWebGL() {
-	log('Inicializace WebGL...', 'info');
 	_camera = new THREE.Camera(75, 16/9, 1, 3000);
 	_camera.position.z = -1000;
-	log('Kamera vytvořena (FOV: 75, pozice Z: -1000)', 'info');
 	_scene = new THREE.Scene();
-	log('Scéna vytvořena', 'info');
 
 	_renderer = new THREE.WebGLRenderer({
 		antialias: true,
@@ -535,22 +406,16 @@ function initWebGL() {
 		sortObjects: false,
 		sortElements: false
 	});
-	log('WebGL Renderer vytvořen (antialiasing: ON)', 'info');
 	
 	_renderer.setClearColor(_guiOptions.bgColor, 1);
 	_lineHolder = new THREE.Object3D();
 	_scene.addObject(_lineHolder);
-	log('Line holder přidán do scény', 'info');
 
 	doLayout();
-	log('Spouštění animační smyčky...', 'info');
 	animate();
-	log('WebGL inicializace dokončena', 'success');
 }
 
 function onImageLoaded() {
-	log('========================================', 'info');
-	log('ČIŠTĚNÍ STARÉ PAMĚTI...', 'info');
 	
 	disposeLineGroup();
 	
@@ -569,60 +434,40 @@ function onImageLoaded() {
 		_originalPixels = null;
 	}
 	
-	log('Stará data vyčištěna', 'success');
-	log('========================================', 'info');
 
 	_imageWidth = _inputImage.width;
 	_imageHeight = _inputImage.height;
 
-	log('----------------------------------------', 'info');
-	log('NAČÍTÁNÍ NOVÉHO OBRÁZKU', 'info');
-	log('Rozměry: ' + _imageWidth + ' x ' + _imageHeight + ' px', 'info');
-	log('Celkem pixelů: ' + (_imageWidth * _imageHeight).toLocaleString(), 'info');
 
 	if (_imageWidth > 6000 || _imageHeight > 6000) {
-		log('CHYBA: Obrázek překročil maximální velikost (6000x6000)', 'error');
 		alert('Obrázek je příliš velký (max 6000x6000 px). Zmenšete ho nebo použijte menší obrázek.');
 		return;
 	}
 	
 	if (_imageWidth > 3000 || _imageHeight > 3000) {
-		log('VAROVÁNÍ: Velký obrázek - zpracování může být pomalé', 'warn');
 	}
 	
 	if (_imageWidth === 0 || _imageHeight === 0) {
-		log('CHYBA: Neplatné rozměry obrázku (0x0)', 'error');
 		alert('Chyba: Obrázek se nepodařilo načíst správně.');
 		return;
 	}
 
 	try {
-		log('Vytváření nového canvas...', 'info');
 		_canvas	= document.createElement('canvas');
 		_canvas.width = _imageWidth;
 		_canvas.height = _imageHeight;
 		_context = _canvas.getContext('2d');
 		
-		log('Vykreslování obrázku do canvas...', 'info');
 		_context.drawImage(_inputImage, 0, 0);
 		
-		log('Extrakce pixel dat...', 'info');
 		var imageData = _context.getImageData(0, 0, _imageWidth, _imageHeight);
 		_pixels	= imageData.data;
 		_originalPixels = new Uint8ClampedArray(_pixels);
 		
-		log('Pixel data uložena: ' + _pixels.length.toLocaleString() + ' bytů', 'info');
-		log('Paměť originálních pixelů: ' + Math.round(_originalPixels.length / 1048576 * 100) / 100 + ' MB', 'info');
 		
-		log('Aplikace filtrů...', 'info');
 		applyFilters();
-		log('Vytváření 3D geometrie...', 'info');
 		createLines();
-		log('Obrázek úspěšně načten a zpracován!', 'success');
-		log('----------------------------------------', 'info');
 	} catch (error) {
-		log('KRITICKÁ CHYBA při zpracování obrázku: ' + error.message, 'error');
-		log('Stack trace: ' + error.stack, 'error');
 		console.error('Chyba při zpracování obrázku:', error);
 		console.error('Stack trace:', error.stack);
 		alert('Nepodařilo se zpracovat obrázek: ' + error.message);
@@ -630,12 +475,10 @@ function onImageLoaded() {
 }
 
 function createLines() {
-	log('>>> Generování 3D linií...', 'info');
 	var startTime = performance.now();
 	
 	// Kontrola, jestli je WebGL inicializovaný
 	if (!_renderer) {
-		log('WebGL ještě není inicializovaný, přeskakuji createLines()', 'warn');
 		return;
 	}
 	
@@ -644,11 +487,9 @@ function createLines() {
 
 	var x = 0, y = 0;
 
-	log('Disposal starých line groups...', 'info');
 	disposeLineGroup();
 
 	_lineGroup = new THREE.Object3D();
-	log('Nový line group vytvořen', 'info');
 
 	if (!_material) {
 		_material = new THREE.LineBasicMaterial({
@@ -729,23 +570,15 @@ function createLines() {
 		totalVertices += line.geometry.vertices.length;
 	});
 	
-	log('Vytvořeno linií: ' + lineCount, 'info');
-	log('Celkem vrcholů: ' + totalVertices.toLocaleString(), 'info');
 	
 	if (totalVertices > 1000000) {
-		log('VAROVÁNÍ: Vysoký počet vrcholů (' + totalVertices.toLocaleString() + ') - může být pomalé!', 'warn');
 	}
 	
 	_lineHolder.addChild(_lineGroup);
 	
 	var endTime = performance.now();
 	var duration = Math.round(endTime - startTime);
-	log('3D geometrie dokončena za ' + duration + ' ms', 'success');
-	log('Barevný režim: ' + _guiOptions.colorMode, 'info');
-	log('Rozestup čar: ' + _guiOptions.scanStep, 'info');
-	log('Hloubka: Invert=' + _guiOptions.depthInvert + ', Min=' + _guiOptions.brightMin + ', Max=' + _guiOptions.brightMax + ', Falloff=' + _guiOptions.depthFalloff, 'info');
 	} catch (error) {
-		log('KRITICKÁ CHYBA při vytváření 3D čar: ' + error.message, 'error');
 		console.error('Chyba při vytváření 3D čar:', error);
 		alert('Chyba při generování 3D efektu. Zkuste snížit velikost obrázku nebo zvýšit rozestup čar.');
 	}
@@ -797,7 +630,6 @@ function disposeLineGroup() {
 }
 
 function resetFilters() {
-	log('Reset všech filtrů na výchozí hodnoty', 'info');
 	_guiOptions.brightness = 0;
 	_guiOptions.exposure = 0;
 	_guiOptions.contrast = 0;
@@ -1118,7 +950,6 @@ function getBrightness(c) {
 
 function loadSample() {
 	try {
-		log('Načítání ukázkového obrázku (Vermeer)...', 'info');
 		
 		if (_inputImage) {
 			_inputImage.onload = null;
@@ -1131,17 +962,14 @@ function loadSample() {
 		_inputImage.src = ("img/vermeer.jpg");
 
 		_inputImage.onload = function() {
-			log('Ukázkový obrázek načten', 'success');
 			onImageLoaded();
 		};
 		
 		_inputImage.onerror = function() {
-			log('CHYBA: Nepodařilo se načíst ukázkový obrázek (img/vermeer.jpg)', 'error');
 			console.error('Nepodařilo se načíst ukázkový obrázek');
 			alert('Ukázkový obrázek nebyl nalezen. Použijte prosím vlastní obrázek.');
 		};
 	} catch (error) {
-		log('CHYBA při načítání ukázky: ' + error.message, 'error');
 		console.error('Chyba při načítání ukázky:', error);
 	}
 }
