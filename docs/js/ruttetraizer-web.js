@@ -624,6 +624,12 @@ function createLines() {
 	log('>>> Generování 3D linií...', 'info');
 	var startTime = performance.now();
 	
+	// Kontrola, jestli je WebGL inicializovaný
+	if (!_renderer) {
+		log('WebGL ještě není inicializovaný, přeskakuji createLines()', 'warn');
+		return;
+	}
+	
 	$("#overlay").hide();
 	_stage.appendChild(_renderer.domElement);
 
