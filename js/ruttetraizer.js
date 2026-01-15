@@ -247,6 +247,23 @@ function resetRGB() {
 	updateImage();
 }
 
+function setFrontalView() {
+	log('Nastavení frontálního pohledu', 'info');
+	_guiOptions.rotationX = 0;
+	_guiOptions.rotationY = 0;
+	_guiOptions.autoRotate = false;
+	_manualRotX = 0;
+	_manualRotY = 0;
+	_mouseX = 0;
+	_mouseY = 0;
+	_guiOptions.scale = 2.0;
+	_guiOptions.cameraZ = -1000;
+	if (_camera) {
+		_camera.position.z = _guiOptions.cameraZ;
+	}
+	_gui.updateDisplay();
+}
+
 function updateRotation() {
 	// Auto-rotace je řešena v render() funkci
 }
@@ -303,6 +320,7 @@ rotationFolder.add(_guiOptions, 'rotationX', -Math.PI, Math.PI, 0.1).name('Rotac
 rotationFolder.add(_guiOptions, 'rotationY', -Math.PI, Math.PI, 0.1).name('Rotace Y (↔)').listen();
 rotationFolder.add(_guiOptions, 'cameraZ', -3000, -100, 10).onChange(updateCamera).name('Vzdálenost kamery');
 rotationFolder.add(this, 'resetRotation').name('🔄 Reset rotace');
+rotationFolder.add(this, 'setFrontalView').name('👁️ Frontální pohled');
 rotationFolder.open();
 
 // Barvy a režimy složka
@@ -412,6 +430,14 @@ $(document).ready( function() {
 			var reader = new FileReader();
 			reader.onload = function() {
 
+				// Vyčisti starý obrázek před načtením nového
+				if (_inputImage) {
+					_inputImage.onload = null;
+					_inputImage.onerror = null;
+					_inputImage.src = '';
+					_inputImage = null;
+				}
+
 				_inputImage = new Image();
 				_inputImage.src = reader.result;
 
@@ -450,6 +476,14 @@ $(document).ready( function() {
 				log('Soubor načten, velikost: ' + Math.round(data.length/1024) + ' KB', 'info');
 				const dataURL = 'data:image/' + mime + ';base64,' + data.toString('base64');
 				
+				// Vyčisti starý obrázek před načtením nového
+				if (_inputImage) {
+					_inputImage.onload = null;
+					_inputImage.onerror = null;
+					_inputImage.src = '';
+					_inputImage = null;
+				}
+
 				_inputImage = new Image();
 				_inputImage.src = dataURL;
 				_inputImage.onload = function() {
@@ -523,12 +557,38 @@ function initWebGL() {
 
 function onImageLoaded() {
 
+	// Nejprve vyčisti veškerá stará data před načtením nového obrázku
+	log('========================================', 'info');
+	log('ČIŠTĚNÍ STARÉ PAMĚTI...', 'info');
+	
+	// Vyčisti 3D objekty
+	disposeLineGroup();
+	
+	// Vyčisti canvas a pixel data
+	if (_canvas) {
+		_canvas.width = 1;
+		_canvas.height = 1;
+		_canvas = null;
+	}
+	if (_context) {
+		_context = null;
+	}
+	if (_pixels) {
+		_pixels = null;
+	}
+	if (_originalPixels) {
+		_originalPixels = null;
+	}
+	
+	log('Stará data vyčištěna', 'success');
+	log('========================================', 'info');
+
 	// load image into canvas pixels
 	_imageWidth = _inputImage.width;
 	_imageHeight = _inputImage.height;
 
 	log('----------------------------------------', 'info');
-	log('NAČÍTÁNÍ OBRÁZKU', 'info');
+	log('NAČÍTÁNÍ NOVÉHO OBRÁZKU', 'info');
 	log('Rozměry: ' + _imageWidth + ' x ' + _imageHeight + ' px', 'info');
 	log('Celkem pixelů: ' + (_imageWidth * _imageHeight).toLocaleString(), 'info');
 
@@ -551,26 +611,8 @@ function onImageLoaded() {
 	}
 
 	try {
-		// Nejprve vyčisti staré objekty
-		log('Čištění starých dat...', 'info');
-		disposeLineGroup();
-		
-		// Vyčisti staré canvas data
-		if (_canvas) {
-			_canvas = null;
-		}
-		if (_context) {
-			_context = null;
-		}
-		if (_pixels) {
-			_pixels = null;
-		}
-		if (_originalPixels) {
-			_originalPixels = null;
-		}
-		
 		// Vytvoř nové canvas
-		log('Vytváření canvas...', 'info');
+		log('Vytváření nového canvas...', 'info');
 		_canvas	= document.createElement('canvas');
 		_canvas.width = _imageWidth;
 		_canvas.height = _imageHeight;
@@ -1143,6 +1185,15 @@ function getBrightness(c) {
 function loadSample() {
 	try {
 		log('Načítání ukázkového obrázku (Vermeer)...', 'info');
+		
+		// Vyčisti starý obrázek před načtením nového
+		if (_inputImage) {
+			_inputImage.onload = null;
+			_inputImage.onerror = null;
+			_inputImage.src = '';
+			_inputImage = null;
+		}
+
 		_inputImage = new Image();
 		_inputImage.src = ("img/vermeer.jpg");
 

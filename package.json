@@ -15,6 +15,7 @@
   "build": {
     "appId": "com.ruttetraizer.app",
     "productName": "Rutt-Etra-Izer",
+    "asar": true,
     "win": {
       "target": [
         {
@@ -24,7 +25,7 @@
           ]
         }
       ],
-      "icon": "img/icon.ico"
+      "requestedExecutionLevel": "asInvoker"
     },
     "files": [
       "**/*",
@@ -33,6 +34,17 @@
     ],
     "directories": {
       "output": "dist"
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "installerIcon": null,
+      "uninstallerIcon": null,
+      "artifactName": "${productName}-Setup-${version}.${ext}",
+      "shortcutName": "Rutt-Etra-Izer"
     }
   },
   "devDependencies": {
