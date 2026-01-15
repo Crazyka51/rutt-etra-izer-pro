@@ -1,0 +1,62 @@
+<!DOCTYPE HTML>
+<html lang="cs">
+	<head>
+		<title>Rutt-Etra-Izer Pro</title>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<meta name="description" content="Emulace Rutt-Etra video syntezátoru s pokročilými filtry a 3D efekty">
+		<link href='https://fonts.googleapis.com/css?family=Lobster&subset=cyrillic,latin&text=Rutt-Etra-IzerDropImageHere' rel='stylesheet' type='text/css'>
+		<link href="css/style.css" rel="stylesheet" type="text/css">
+	</head>
+	<body>
+		<div id="controls">
+			<h1>Rutt-Etra-Izer Pro</h1>
+			<p>
+				Emulace Rutt-Etra video syntezátoru s pokročilými filtry.
+				<a href="https://github.com/Crazyka51/rutt-etra-izer-pro" target="_blank">GitHub</a>
+			</p>
+			<h3>Ovládání</h3>
+			<ul>
+				<li>
+					Přetáhněte obrázek, načtěte
+					<a id="loadSample">ukázkový obrázek</a>, nebo
+					<label for="fileInput" style="cursor: pointer; color: #0066cc; text-decoration: underline;">vyberte soubor</label>
+					<input type="file" id="fileInput" accept="image/*" style="display: none;">
+				</li>
+				<li>
+					Klikněte a táhněte pro rotaci.
+				</li>
+				<li>
+					Kolečko myši pro přiblížení/oddálení.
+				</li>
+				<li>
+					Šipky pro manuální rotaci.
+				</li>
+				<li>
+					Klávesa 'S' pro uložení obrázku.
+				</li>
+			</ul>
+			<h3>Možnosti</h3>
+			<div id="controls-container">
+			</div>
+		</div>
+		<div id="container">
+			<div id="stage">
+				<div id="overlay">
+					<h1>Přetáhněte obrázek sem</h1>
+				</div>
+			</div>
+		</div>
+		
+		<!-- Log Panel -->
+		<div id="log-panel"></div>
+		
+		<script src="js/Three.js"></script>
+		<script src="js/Detector.js"></script>
+		<script src="js/RequestAnimationFrame.js"></script>
+		<script src="js/jquery.min.js"></script>
+		<script src="js/jquery.mousewheel.min.js"></script>
+		<script src="js/DAT.GUI.min.js"></script>
+		<script src="js/ruttetraizer-web.js"></script>
+	</body>
+</html>
