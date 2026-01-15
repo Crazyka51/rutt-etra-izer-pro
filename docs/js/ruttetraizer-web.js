@@ -288,92 +288,6 @@ function updateLineColor() {
 	}, 300);
 }
 
-// Init GUI - Web version uses dat.GUI from CDN
-var _gui = new dat.GUI({ width: 280 });
-document.getElementById('controls-container').appendChild( _gui.domElement );
-
-// 3D Efekt složka
-var effectFolder = _gui.addFolder('⚙️ 3D Efekt');
-effectFolder.add(_guiOptions, 'stageSize',.2,1,.1).onChange(doLayout).name('Velikost scény');
-effectFolder.add(_guiOptions, 'scale', 0.1, 10,0.1).listen().name('Přiblížení');
-effectFolder.add(_guiOptions, 'scanStep', 1, 20,1).onChange( updateImage ).name('Rozestup čar');
-effectFolder.add(_guiOptions, 'lineThickness', 0.1, 10,0.1).onChange( updateMaterial ).name('Tloušťka čar');
-effectFolder.add(_guiOptions, 'depth', 0, 300,1).name('Hloubka efektu');
-effectFolder.add(_guiOptions, 'opacity', 0, 1,0.1).onChange( updateMaterial ).name('Průhlednost');
-effectFolder.add(_guiOptions, 'depthInvert').name('⚡ Invertovat hloubku').onChange( updateImage );
-effectFolder.add(_guiOptions, 'brightMin', 0, 255, 1).name('Min. jas (ořez)').onChange( updateImage );
-effectFolder.add(_guiOptions, 'brightMax', 0, 255, 1).name('Max. jas (ořez)').onChange( updateImage );
-effectFolder.add(_guiOptions, 'depthFalloff', 0.1, 5.0, 0.1).name('Kontrast hloubky').onChange( updateImage );
-effectFolder.add(this, 'resetEffect').name('🔄 Reset efektu');
-effectFolder.open();
-
-// 3D Rotace a kamera složka
-var rotationFolder = _gui.addFolder('🔄 Rotace a Kamera');
-rotationFolder.add(_guiOptions, 'autoRotate').name('Auto-rotace').onChange(updateRotation);
-rotationFolder.add(_guiOptions, 'rotateSpeed', 0.001, 0.05, 0.001).name('Rychlost rotace');
-rotationFolder.add(_guiOptions, 'rotationX', -Math.PI, Math.PI, 0.1).name('Rotace X (↕)').listen();
-rotationFolder.add(_guiOptions, 'rotationY', -Math.PI, Math.PI, 0.1).name('Rotace Y (↔)').listen();
-rotationFolder.add(_guiOptions, 'cameraZ', -3000, -100, 10).onChange(updateCamera).name('Vzdálenost kamery');
-rotationFolder.add(this, 'resetRotation').name('🔄 Reset rotace');
-rotationFolder.add(this, 'setFrontalView').name('👁️ Frontální pohled');
-rotationFolder.open();
-
-// Barvy a režimy složka
-var visualFolder = _gui.addFolder('🎨 Vizuální režimy');
-visualFolder.addColor(_guiOptions, 'bgColor').onChange(updateBackground).name('Barva pozadí');
-visualFolder.add(_guiOptions, 'colorMode', ['original', 'monochrome', 'rainbow', 'gradient']).onChange(updateImage).name('Barevný režim');
-visualFolder.add(_guiOptions, 'lineColorR', 0, 255, 1).onChange(updateLineColor).name('Barva čar - R');
-visualFolder.add(_guiOptions, 'lineColorG', 0, 255, 1).onChange(updateLineColor).name('Barva čar - G');
-visualFolder.add(_guiOptions, 'lineColorB', 0, 255, 1).onChange(updateLineColor).name('Barva čar - B');
-visualFolder.add(this, 'resetVisual').name('🔄 Reset vizualizace');
-visualFolder.open();
-
-// Základní úpravy složka
-var basicFolder = _gui.addFolder('🎨 Základní úpravy');
-basicFolder.add(_guiOptions, 'brightness', -100, 100, 1).onChange( updateImage ).name('Jas');
-basicFolder.add(_guiOptions, 'contrast', -100, 100, 1).onChange( updateImage ).name('Kontrast');
-basicFolder.add(_guiOptions, 'exposure', -100, 100, 1).onChange( updateImage ).name('Expozice');
-basicFolder.add(_guiOptions, 'saturation', -100, 100, 1).onChange( updateImage ).name('Sytost');
-basicFolder.add(_guiOptions, 'sharpness', 0, 100, 1).onChange( updateImage ).name('Ostrost');
-basicFolder.add(this, 'resetBasic').name('🔄 Reset základu');
-basicFolder.open();
-
-// Pokročilé úpravy složka
-var advancedFolder = _gui.addFolder('✨ Pokročilé úpravy');
-advancedFolder.add(_guiOptions, 'highlights', -100, 100, 1).onChange( updateImage ).name('Světlá místa');
-advancedFolder.add(_guiOptions, 'shadows', -100, 100, 1).onChange( updateImage ).name('Stíny');
-advancedFolder.add(_guiOptions, 'vignette', 0, 100, 1).onChange( updateImage ).name('Vinětace');
-advancedFolder.add(this, 'resetAdvanced').name('🔄 Reset pokročilých');
-advancedFolder.open();
-
-// Barvy složka
-var colorFolder = _gui.addFolder('🌈 Barevné úpravy');
-colorFolder.add(_guiOptions, 'color', -100, 100, 1).onChange( updateImage ).name('Barevný posun');
-colorFolder.add(_guiOptions, 'warmth', -100, 100, 1).onChange( updateImage ).name('Teplota');
-colorFolder.add(_guiOptions, 'tint', -100, 100, 1).onChange( updateImage ).name('Nádech');
-colorFolder.add(_guiOptions, 'hue', -180, 180, 1).onChange( updateImage ).name('Barevný odstín');
-colorFolder.add(_guiOptions, 'gamma', 0.1, 3.0, 0.1).onChange( updateImage ).name('Gamma korekce');
-colorFolder.add(_guiOptions, 'invertImage').onChange( updateImage ).name('Invertovat barvy');
-colorFolder.add(this, 'resetColor').name('🔄 Reset barev');
-colorFolder.open();
-
-// RGB Kanály složka
-var rgbFolder = _gui.addFolder('🔴🟢🔵 RGB Kanály');
-rgbFolder.add(_guiOptions, 'rGain', 0, 2.0, 0.1).onChange( updateImage ).name('Zesílení R (Červená)');
-rgbFolder.add(_guiOptions, 'gGain', 0, 2.0, 0.1).onChange( updateImage ).name('Zesílení G (zelená)');
-rgbFolder.add(_guiOptions, 'bGain', 0, 2.0, 0.1).onChange( updateImage ).name('Zesílení B (modrá)');
-rgbFolder.add(this, 'resetRGB').name('🔄 Reset RGB');
-
-// Akce
-_gui.add(this, 'resetFilters').name('🔄 Resetovat filtry');
-_gui.add(this, 'saveImage').name('💾 Uložit obrázek');
-
-// Diagnostika
-var diagFolder = _gui.addFolder('🔧 Diagnostika');
-diagFolder.add(this, 'exportLogs').name('📥 Exportovat logy');
-diagFolder.add(this, 'clearLogs').name('🗑️ Vymazat logy');
-diagFolder.add(this, 'showSystemInfo').name('ℹ️ Info o systému');
-
 function showSystemInfo() {
 	var info = getSystemInfo();
 	var msg = 'SYSTÉMOVÉ INFORMACE:\n\n';
@@ -388,6 +302,98 @@ function showSystemInfo() {
 	alert(msg);
 }
 
+function initGUI() {
+	log('Inicializace GUI...', 'info');
+	
+	// Init GUI - Web version uses dat.GUI from CDN
+	_gui = new dat.GUI({ width: 280 });
+	document.getElementById('controls-container').appendChild( _gui.domElement );
+
+	// 3D Efekt složka
+	var effectFolder = _gui.addFolder('⚙️ 3D Efekt');
+	effectFolder.add(_guiOptions, 'stageSize',.2,1,.1).onChange(doLayout).name('Velikost scény');
+	effectFolder.add(_guiOptions, 'scale', 0.1, 10,0.1).listen().name('Přiblížení');
+	effectFolder.add(_guiOptions, 'scanStep', 1, 20,1).onChange( updateImage ).name('Rozestup čar');
+	effectFolder.add(_guiOptions, 'lineThickness', 0.1, 10,0.1).onChange( updateMaterial ).name('Tloušťka čar');
+	effectFolder.add(_guiOptions, 'depth', 0, 300,1).name('Hloubka efektu');
+	effectFolder.add(_guiOptions, 'opacity', 0, 1,0.1).onChange( updateMaterial ).name('Průhlednost');
+	effectFolder.add(_guiOptions, 'depthInvert').name('⚡ Invertovat hloubku').onChange( updateImage );
+	effectFolder.add(_guiOptions, 'brightMin', 0, 255, 1).name('Min. jas (ořez)').onChange( updateImage );
+	effectFolder.add(_guiOptions, 'brightMax', 0, 255, 1).name('Max. jas (ořez)').onChange( updateImage );
+	effectFolder.add(_guiOptions, 'depthFalloff', 0.1, 5.0, 0.1).name('Kontrast hloubky').onChange( updateImage );
+	effectFolder.add({ fn: resetEffect }, 'fn').name('🔄 Reset efektu');
+	effectFolder.open();
+
+	// 3D Rotace a kamera složka
+	var rotationFolder = _gui.addFolder('🔄 Rotace a Kamera');
+	rotationFolder.add(_guiOptions, 'autoRotate').name('Auto-rotace').onChange(updateRotation);
+	rotationFolder.add(_guiOptions, 'rotateSpeed', 0.001, 0.05, 0.001).name('Rychlost rotace');
+	rotationFolder.add(_guiOptions, 'rotationX', -Math.PI, Math.PI, 0.1).name('Rotace X (↕)').listen();
+	rotationFolder.add(_guiOptions, 'rotationY', -Math.PI, Math.PI, 0.1).name('Rotace Y (↔)').listen();
+	rotationFolder.add(_guiOptions, 'cameraZ', -3000, -100, 10).onChange(updateCamera).name('Vzdálenost kamery');
+	rotationFolder.add({ fn: resetRotation }, 'fn').name('🔄 Reset rotace');
+	rotationFolder.add({ fn: setFrontalView }, 'fn').name('👁️ Frontální pohled');
+	rotationFolder.open();
+
+	// Barvy a režimy složka
+	var visualFolder = _gui.addFolder('🎨 Vizuální režimy');
+	visualFolder.addColor(_guiOptions, 'bgColor').onChange(updateBackground).name('Barva pozadí');
+	visualFolder.add(_guiOptions, 'colorMode', ['original', 'monochrome', 'rainbow', 'gradient']).onChange(updateImage).name('Barevný režim');
+	visualFolder.add(_guiOptions, 'lineColorR', 0, 255, 1).onChange(updateLineColor).name('Barva čar - R');
+	visualFolder.add(_guiOptions, 'lineColorG', 0, 255, 1).onChange(updateLineColor).name('Barva čar - G');
+	visualFolder.add(_guiOptions, 'lineColorB', 0, 255, 1).onChange(updateLineColor).name('Barva čar - B');
+	visualFolder.add({ fn: resetVisual }, 'fn').name('🔄 Reset vizualizace');
+	visualFolder.open();
+
+	// Základní úpravy složka
+	var basicFolder = _gui.addFolder('🎨 Základní úpravy');
+	basicFolder.add(_guiOptions, 'brightness', -100, 100, 1).onChange( updateImage ).name('Jas');
+	basicFolder.add(_guiOptions, 'contrast', -100, 100, 1).onChange( updateImage ).name('Kontrast');
+	basicFolder.add(_guiOptions, 'exposure', -100, 100, 1).onChange( updateImage ).name('Expozice');
+	basicFolder.add(_guiOptions, 'saturation', -100, 100, 1).onChange( updateImage ).name('Sytost');
+	basicFolder.add(_guiOptions, 'sharpness', 0, 100, 1).onChange( updateImage ).name('Ostrost');
+	basicFolder.add({ fn: resetBasic }, 'fn').name('🔄 Reset základu');
+	basicFolder.open();
+
+	// Pokročilé úpravy složka
+	var advancedFolder = _gui.addFolder('✨ Pokročilé úpravy');
+	advancedFolder.add(_guiOptions, 'highlights', -100, 100, 1).onChange( updateImage ).name('Světlá místa');
+	advancedFolder.add(_guiOptions, 'shadows', -100, 100, 1).onChange( updateImage ).name('Stíny');
+	advancedFolder.add(_guiOptions, 'vignette', 0, 100, 1).onChange( updateImage ).name('Vinětace');
+	advancedFolder.add({ fn: resetAdvanced }, 'fn').name('🔄 Reset pokročilých');
+	advancedFolder.open();
+
+	// Barvy složka
+	var colorFolder = _gui.addFolder('🌈 Barevné úpravy');
+	colorFolder.add(_guiOptions, 'color', -100, 100, 1).onChange( updateImage ).name('Barevný posun');
+	colorFolder.add(_guiOptions, 'warmth', -100, 100, 1).onChange( updateImage ).name('Teplota');
+	colorFolder.add(_guiOptions, 'tint', -100, 100, 1).onChange( updateImage ).name('Nádech');
+	colorFolder.add(_guiOptions, 'hue', -180, 180, 1).onChange( updateImage ).name('Barevný odstín');
+	colorFolder.add(_guiOptions, 'gamma', 0.1, 3.0, 0.1).onChange( updateImage ).name('Gamma korekce');
+	colorFolder.add(_guiOptions, 'invertImage').onChange( updateImage ).name('Invertovat barvy');
+	colorFolder.add({ fn: resetColor }, 'fn').name('🔄 Reset barev');
+	colorFolder.open();
+
+	// RGB Kanály složka
+	var rgbFolder = _gui.addFolder('🔴🟢🔵 RGB Kanály');
+	rgbFolder.add(_guiOptions, 'rGain', 0, 2.0, 0.1).onChange( updateImage ).name('Zesílení R (Červená)');
+	rgbFolder.add(_guiOptions, 'gGain', 0, 2.0, 0.1).onChange( updateImage ).name('Zesílení G (zelená)');
+	rgbFolder.add(_guiOptions, 'bGain', 0, 2.0, 0.1).onChange( updateImage ).name('Zesílení B (modrá)');
+	rgbFolder.add({ fn: resetRGB }, 'fn').name('🔄 Reset RGB');
+
+	// Akce
+	_gui.add({ fn: resetFilters }, 'fn').name('🔄 Resetovat filtry');
+	_gui.add({ fn: saveImage }, 'fn').name('💾 Uložit obrázek');
+
+	// Diagnostika
+	var diagFolder = _gui.addFolder('🔧 Diagnostika');
+	diagFolder.add({ fn: exportLogs }, 'fn').name('📥 Exportovat logy');
+	diagFolder.add({ fn: clearLogs }, 'fn').name('🗑️ Vymazat logy');
+	diagFolder.add({ fn: showSystemInfo }, 'fn').name('ℹ️ Info o systému');
+	
+	log('GUI inicializováno', 'success');
+}
+
 /**
  * Init page
  */
@@ -400,6 +406,9 @@ $(document).ready( function() {
 	log('Platforma: ' + sysInfo.platform, 'info');
 	log('Rozlišení: ' + sysInfo.screenResolution, 'info');
 	log('WebGL: ' + (sysInfo.webGLSupport ? 'Podporováno' : 'NEPODPOROVÁNO!'), sysInfo.webGLSupport ? 'info' : 'error');
+
+	// Inicializuj GUI až po načtení DOM
+	initGUI();
 
 	$(window).bind('resize', doLayout);
 
