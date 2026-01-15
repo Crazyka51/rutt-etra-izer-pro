@@ -457,7 +457,7 @@ $(document).ready( function() {
 	});
 	
 	// Web version: Use HTML file input instead of Electron IPC
-	$("#fileInput").on('change', function(event) {
+	$("#fileInput").change(function(event) {
 		var file = event.target.files[0];
 		if (file) {
 			log('Vybrán soubor: ' + file.name + ' (' + Math.round(file.size/1024) + ' KB)', 'info');
