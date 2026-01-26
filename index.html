@@ -8,36 +8,53 @@
 		<link href="css/style.css" rel="stylesheet" type="text/css">
 	</head>
 	<body>
-		<div id="controls">
-			<h1>Rutt-Etra-Izer</h1>
-			<p>
-				This demo emulates the Rutt-Etra video synthesizer.
-				<a href="http://www.airtightinteractive.com/2011/06/rutt-etra-izer/">More info</a>.
-			</p>
-			<h3>Controls</h3>
-			<ul>
-				<li>
-					Drop an image, load a
-					<a id="loadSample">sample image</a>, or
-					<button id="loadFile">choose from file</button>.
-				</li>
-				<li>
-					Click and drag to rotate.
-				</li>
-				<li>
-					Mousewheel to scale.
-				</li>
-				<li>
-					Use arrow keys to rotate manually.
-				</li>
-				<li>
-					'S' key to save image.
-				</li>
-			</ul>
-			<h3>Options</h3>
-			<div id="controls-container">
+		<!-- Top Navbar -->
+		<div id="top-bar">
+			<div class="top-bar-content">
+				<div class="brand">
+					<h1>Rutt-Etra-Izer Pro</h1>
+				</div>
+				<div class="top-actions">
+					<button id="toggle-help" class="icon-btn" title="Zobrazit nápovědu">❓</button>
+					<button id="loadFile" class="btn-primary">📁 Načíst obrázek</button>
+					<button id="loadSample" class="btn-secondary">🎨 Ukázka</button>
+					<button id="save-btn" class="btn-success" onclick="saveImage()">💾 Uložit</button>
+					<a href="http://www.airtightinteractive.com/2011/06/rutt-etra-izer/" target="_blank" class="btn-link">Info</a>
+				</div>
 			</div>
 		</div>
+		
+		<!-- Collapsible Help Panel -->
+		<div id="help-panel" class="collapsed">
+			<div class="help-content">
+				<h3>⌨️ Ovládání</h3>
+				<div class="help-grid">
+					<div class="help-item">
+						<span class="key">Myš</span>
+						<span>Klik + táhnutí pro rotaci</span>
+					</div>
+					<div class="help-item">
+						<span class="key">Kolečko</span>
+						<span>Přiblížení / oddálení</span>
+					</div>
+					<div class="help-item">
+						<span class="key">↑ ↓ ← →</span>
+						<span>Manuální rotace</span>
+					</div>
+					<div class="help-item">
+						<span class="key">S</span>
+						<span>Uložit obrázek</span>
+					</div>
+				</div>
+			</div>
+		</div>
+		
+		<!-- Side Panel for Controls -->
+		<div id="controls-panel">
+			<button id="toggle-panel" class="toggle-btn">◀</button>
+			<div id="controls-container"></div>
+		</div>
+		
 		<div id="container">
 			<div id="stage">
 				<div id="overlay">
@@ -45,9 +62,6 @@
 				</div>
 			</div>
 		</div>
-		
-		<!-- Log Panel -->
-		<div id="log-panel"></div>
 		
 		<script src="js/Three.js"></script>
 		<script src="js/Detector.js"></script>

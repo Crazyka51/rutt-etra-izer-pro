@@ -9,37 +9,54 @@
 		<link href="css/style.css" rel="stylesheet" type="text/css">
 	</head>
 	<body>
-		<div id="controls">
-			<h1>Rutt-Etra-Izer Pro</h1>
-			<p>
-				Emulace Rutt-Etra video syntezátoru s pokročilými filtry.
-				<a href="https://github.com/Crazyka51/rutt-etra-izer-pro" target="_blank">GitHub</a>
-			</p>
-			<h3>Ovládání</h3>
-			<ul>
-				<li>
-					Přetáhněte obrázek, načtěte
-					<a id="loadSample">ukázkový obrázek</a>, nebo
-					<label for="fileInput" style="cursor: pointer; color: #0066cc; text-decoration: underline;">vyberte soubor</label>
+		<!-- Top Navbar -->
+		<div id="top-bar">
+			<div class="top-bar-content">
+				<div class="brand">
+					<h1>Rutt-Etra-Izer Pro</h1>
+				</div>
+				<div class="top-actions">
+					<button id="toggle-help" class="icon-btn" title="Zobrazit nápovědu">❓</button>
+					<label for="fileInput" class="btn-primary">📁 Načíst obrázek</label>
 					<input type="file" id="fileInput" accept="image/*" style="display: none;">
-				</li>
-				<li>
-					Klikněte a táhněte pro rotaci.
-				</li>
-				<li>
-					Kolečko myši pro přiblížení/oddálení.
-				</li>
-				<li>
-					Šipky pro manuální rotaci.
-				</li>
-				<li>
-					Klávesa 'S' pro uložení obrázku.
-				</li>
-			</ul>
-			<h3>Možnosti</h3>
-			<div id="controls-container">
+					<button id="loadSample" class="btn-secondary">🎨 Ukázka</button>
+					<button id="save-btn" class="btn-success" onclick="saveImage()">💾 Uložit</button>
+					<a href="https://github.com/Crazyka51/rutt-etra-izer-pro" target="_blank" class="btn-link">GitHub</a>
+				</div>
 			</div>
 		</div>
+		
+		<!-- Collapsible Help Panel -->
+		<div id="help-panel" class="collapsed">
+			<div class="help-content">
+				<h3>⌨️ Ovládání</h3>
+				<div class="help-grid">
+					<div class="help-item">
+						<span class="key">Myš</span>
+						<span>Klik + táhnutí pro rotaci</span>
+					</div>
+					<div class="help-item">
+						<span class="key">Kolečko</span>
+						<span>Přiblížení / oddálení</span>
+					</div>
+					<div class="help-item">
+						<span class="key">↑ ↓ ← →</span>
+						<span>Manuální rotace</span>
+					</div>
+					<div class="help-item">
+						<span class="key">S</span>
+						<span>Uložit obrázek</span>
+					</div>
+				</div>
+			</div>
+		</div>
+		
+		<!-- Side Panel for Controls -->
+		<div id="controls-panel">
+			<button id="toggle-panel" class="toggle-btn">◀</button>
+			<div id="controls-container"></div>
+		</div>
+		
 		<div id="container">
 			<div id="stage">
 				<div id="overlay">

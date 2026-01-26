@@ -290,6 +290,16 @@ $(document).ready( function() {
 	// Inicializuj GUI až po načtení DOM
 	initGUI();
 
+	// Ovládání help panelu
+	$("#toggle-help").click(function() {
+		$("#help-panel").toggleClass("collapsed");
+	});
+
+	// Ovládání postranního panelu
+	$("#toggle-panel").click(function() {
+		$("#controls-panel").toggleClass("collapsed");
+	});
+
 	$(window).bind('resize', doLayout);
 
 	//init image drag and drop
@@ -438,17 +448,23 @@ function onImageLoaded() {
 	_imageWidth = _inputImage.width;
 	_imageHeight = _inputImage.height;
 
-
 	if (_imageWidth > 6000 || _imageHeight > 6000) {
 		alert('Obrázek je příliš velký (max 6000x6000 px). Zmenšete ho nebo použijte menší obrázek.');
+		// Vyčisti obrázek z paměti
+		_inputImage.onload = null;
+		_inputImage.onerror = null;
+		_inputImage.src = '';
+		_inputImage = null;
 		return;
-	}
-	
-	if (_imageWidth > 3000 || _imageHeight > 3000) {
 	}
 	
 	if (_imageWidth === 0 || _imageHeight === 0) {
 		alert('Chyba: Obrázek se nepodařilo načíst správně.');
+		// Vyčisti obrázek z paměti
+		_inputImage.onload = null;
+		_inputImage.onerror = null;
+		_inputImage.src = '';
+		_inputImage = null;
 		return;
 	}
 
@@ -475,8 +491,6 @@ function onImageLoaded() {
 }
 
 function createLines() {
-	var startTime = performance.now();
-	
 	// Kontrola, jestli je WebGL inicializovaný
 	if (!_renderer) {
 		return;
@@ -564,20 +578,8 @@ function createLines() {
 			_lineGroup.addChild(line);
 		}
 
-	var lineCount = _lineGroup.children.length;
-	var totalVertices = 0;
-	_lineGroup.children.forEach(function(line) {
-		totalVertices += line.geometry.vertices.length;
-	});
-	
-	
-	if (totalVertices > 1000000) {
-	}
-	
 	_lineHolder.addChild(_lineGroup);
 	
-	var endTime = performance.now();
-	var duration = Math.round(endTime - startTime);
 	} catch (error) {
 		console.error('Chyba při vytváření 3D čar:', error);
 		alert('Chyba při generování 3D efektu. Zkuste snížit velikost obrázku nebo zvýšit rozestup čar.');

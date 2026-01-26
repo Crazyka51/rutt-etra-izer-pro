@@ -406,6 +406,16 @@ $(document).ready( function() {
 	log('Rozlišení: ' + sysInfo.screenResolution, 'info');
 	log('WebGL: ' + (sysInfo.webGLSupport ? 'Podporováno' : 'NEPODPOROVÁNO!'), sysInfo.webGLSupport ? 'info' : 'error');
 
+	// Ovládání help panelu
+	$("#toggle-help").click(function() {
+		$("#help-panel").toggleClass("collapsed");
+	});
+
+	// Ovládání postranního panelu
+	$("#toggle-panel").click(function() {
+		$("#controls-panel").toggleClass("collapsed");
+	});
+
 	$(window).bind('resize', doLayout);
 
 	//init image drag and drop
