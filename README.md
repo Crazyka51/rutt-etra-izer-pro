@@ -118,8 +118,8 @@ Aplikace je navržena pro profesionální fotografy a digitální umělce:
 
 ## 📄 Licence
 
-Založeno na původním [RuttEtraIzer](http://www.airtightinteractive.com/2011/06/rutt-etra-izer/) od Felix Turner  
-Modifikováno a rozšířeno o profesionální funkce
+Tento projekt vychází z původní práce Rutt‑Etra‑Izer od Felixe Turnera (Airtight Interactive).[RuttEtraIzer](http://www.airtightinteractive.com/2011/06/rutt-etra-izer/) od Felix Turner. Aktuální verze byla dále rozšířena a upravena — přidány nové funkce, optimalizace a úpravy uživatelského rozhraní.
+Aktuální verze byla dále rozšířena a upravena — přidány nové funkce, optimalizace a úpravy uživatelského rozhraní.
 
 ## 🤝 Přispívání
 
@@ -138,3 +138,4 @@ GitHub Issues: [https://github.com/Crazyka51/rutt-etra-izer-pro/issues](https://
 **Made with ❤️ for photographers and digital artists**
 
 🌟 **Star this repository** if you find it useful!
+
