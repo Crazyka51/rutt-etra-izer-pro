@@ -409,11 +409,15 @@ $(document).ready( function() {
 	// Ovládání help panelu
 	$("#toggle-help").click(function() {
 		$("#help-panel").toggleClass("collapsed");
+		// Počkej na dokončení animace a pak přepočítej layout
+		setTimeout(doLayout, 350);
 	});
 
 	// Ovládání postranního panelu
 	$("#toggle-panel").click(function() {
 		$("#controls-panel").toggleClass("collapsed");
+		// Počkej na dokončení animace a pak přepočítej layout
+		setTimeout(doLayout, 350);
 	});
 
 	$(window).bind('resize', doLayout);
@@ -1133,46 +1137,59 @@ function render() {
 }
 
 function doLayout() {
-
-	var winHeight, winWidth, controlsWidth, containerWidth;
-
-	//get dims
-	winHeight = window.innerHeight ? window.innerHeight : $(window).height();
-	winWidth = window.innerWidth ? window.innerWidth : $(window).width();
-	controlsWidth = $('#controls').outerWidth();
-
-	//set container size
-	$('#container').height(parseInt(winHeight));
-	$('#container').width(parseInt(winWidth) - parseInt(controlsWidth));
-	containerWidth = $('#container').outerWidth();
-
-	//set stage size as fraction of window size
-	//use letterbox dimensions unless 100%
-	_stageWidth = containerWidth * _guiOptions.stageSize;
-	_stageHeight = containerWidth * _guiOptions.stageSize * 9 / 16;
-
-	if (_guiOptions.stageSize === 1) {
-		_stageHeight = $('#container').outerHeight();
-	}
-	$('#stage').width(_stageWidth);
-	$('#stage').height(_stageHeight);
-
-	//Center stage div inside window
-	$('#stage').css({
-		left: Math.max((containerWidth - _stageWidth)/2 + controlsWidth,controlsWidth),
-		top: (winHeight -_stageHeight)/2,
-		visibility:"visible"
+	var winHeight = window.innerHeight || $(window).height();
+	var winWidth = window.innerWidth || $(window).width();
+	
+	// Výška horního panelu
+	var topBarHeight = 60;
+	
+	// Výška help panelu (pokud není sbalený)
+	var helpPanelHeight = $('#help-panel').hasClass('collapsed') ? 0 : $('#help-panel').outerHeight();
+	
+	// Šířka postranního panelu (pokud není sbalený)
+	var controlsPanelWidth = $('#controls-panel').hasClass('collapsed') ? 0 : 300;
+	
+	// Dostupná výška a šířka pro container
+	var availableHeight = winHeight - topBarHeight - helpPanelHeight;
+	var availableWidth = winWidth - controlsPanelWidth;
+	
+	// Nastavení velikosti containeru
+	$('#container').css({
+		top: topBarHeight + helpPanelHeight,
+		left: 0,
+		right: controlsPanelWidth,
+		height: availableHeight
 	});
-
-	//set webgl size
+	
+	// Stage zabírá celý container (nebo jeho část podle stageSize)
+	_stageWidth = availableWidth * _guiOptions.stageSize;
+	_stageHeight = availableHeight * _guiOptions.stageSize;
+	
+	// Pokud je stageSize 1, použij celý prostor
+	if (_guiOptions.stageSize === 1) {
+		_stageWidth = availableWidth;
+		_stageHeight = availableHeight;
+	}
+	
+	$('#stage').css({
+		width: _stageWidth,
+		height: _stageHeight,
+		left: (availableWidth - _stageWidth) / 2,
+		top: (availableHeight - _stageHeight) / 2,
+		visibility: "visible"
+	});
+	
+	// Nastavení WebGL rendereru
 	if (_renderer) {
 		_renderer.setSize(_stageWidth, _stageHeight);
 		_camera.aspect = _stageWidth / _stageHeight;
 		_camera.updateProjectionMatrix();
 	}
-
-	_stageCenterX = $('#stage').offset().left +_stageWidth / 2;
-	_stageCenterY = window.innerHeight / 2
+	
+	// Aktualizace středu stage pro rotaci myší
+	var stageOffset = $('#stage').offset();
+	_stageCenterX = stageOffset.left + _stageWidth / 2;
+	_stageCenterY = stageOffset.top + _stageHeight / 2;
 }
 
 // Returns a hexidecimal color for a given pixel in the pixel array.
